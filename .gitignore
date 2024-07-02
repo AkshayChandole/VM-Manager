@@ -1,0 +1,7 @@
+#clients-side
+/vm-manager-client/node_modules
+/vm-manager-client/README.md
+/vm-manager-client/.gitignore
+
+#server-side
+/vm-manager-server/node_modules
