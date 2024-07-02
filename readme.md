@@ -33,7 +33,7 @@ Welcome to the VM Manager application! This app allows users to manage Virtual M
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/vm-manager.git
+    git clone https://github.com/AkshayChandole/vm-manager.git
     cd vm-manager
     ```
 2.  **Install server dependencies:**
