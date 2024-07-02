@@ -9,6 +9,9 @@ Welcome to the VM Manager application! This app allows users to manage Virtual M
 - **Connect to VM:** Connect to a VM using RDP (Remote Desktop Protocol).
 - **Real-Time Notifications** using React Toastify 📢
 
+## 🔒 Technical Note:
+Since directly connecting to a remote desktop using a web app poses security concerns, I've implemented a method to trigger batch commands for establishing RDP connections using Node.js. This ensures a secure and seamless connection process.
+
 ## 📸 Screenshots
 
 ### 🏠 Home Page
