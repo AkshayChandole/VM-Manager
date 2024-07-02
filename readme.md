@@ -7,6 +7,7 @@ Welcome to the VM Manager application! This app allows users to manage Virtual M
 - **Add New VM:** Add details for a new VM including name, domain, username, and password.
 - **Delete VM:** Remove a VM from the list.
 - **Connect to VM:** Connect to a VM using RDP (Remote Desktop Protocol).
+- **Real-Time Notifications** using React Toastify 📢
 
 ## 📸 Screenshots
 
@@ -101,7 +102,7 @@ Welcome to the VM Manager application! This app allows users to manage Virtual M
 
 ## 💻 Technologies Used
 
-- **Frontend:** React, Bootstrap, React Toastify
+- **Frontend:** React, React Toastify
 - **Backend:** Node.js, Express
 - **Database:** JSON file (for simplicity)
 
