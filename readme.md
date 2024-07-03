@@ -4,15 +4,18 @@ Welcome to the VM Manager application! This app allows users to manage Virtual M
 
 ## ✨ Features
 
-- **Add New VM:** Add details for a new VM including name, domain, username, and password.
-- **Delete VM:** Remove a VM from the list.
-- **Connect to VM:** Connect to a VM using RDP (Remote Desktop Protocol).
-- **Real-Time Notifications** using React Toastify 📢
+- **➕ Add New VM:** Add details for a new VM including name, domain, username, and password.
+- **❌ Delete VM:** Remove a VM from the list.
+- **🔗 Connect to VM:** Connect to a VM using RDP (Remote Desktop Protocol).
+- **📢 Real-Time Notifications** using React Toastify
+- **🔒 Password Encryption** using CryptoJS
 
-## 🔒 Technical Note:
+## 📝 Technical Note:
+
 Since directly connecting to a remote desktop using a web app poses security concerns, I've implemented a method to trigger batch commands for establishing RDP connections using Node.js. This ensures a secure and seamless connection process.
 
 ## Watch the Demo Video
+
 ![Watch the video 🎞️](demo/VM-Manager-Demo.mp4)
 
 ## 📸 Screenshots
