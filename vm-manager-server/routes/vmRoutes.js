@@ -3,52 +3,19 @@ const fs = require("fs");
 const path = require("path");
 const RDP = require("node-rdp");
 const { connectToVm } = require("../utils/vmConnectionUtils");
+const { ensureFileAndDirectoryExist } = require("../utils/fileUtils");
+const {
+  encryptPassword,
+  decryptPassword,
+} = require("../utils/encryptionUtils");
 const router = express.Router();
 
 const dirPath = path.join(__dirname, "../config");
 const filePath = path.join(dirPath, "VMs.json");
 
-// Function to ensure the config directory and VMs.json file exist
-const ensureFileAndDirectoryExist = () => {
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true });
-  }
-  if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, "[]");
-  }
-};
-
-// Connect to VM via RDP
-const connectToRDP = (vmDetails) => {
-  return new Promise((resolve, reject) => {
-    const rdpOptions = {
-      address: vmDetails.domain, // Replace with your VM's IP or hostname
-      username: vmDetails.username,
-      password: vmDetails.password,
-      domain: "", // Optional domain name, if applicable
-      port: 3389, // Default RDP port
-      shell: "cmd.exe", // Shell to execute after connection (Windows-specific)
-      program: "explorer.exe", // Program to execute after connection (Windows-specific)
-    };
-
-    const rdp = new RDP(rdpOptions);
-
-    rdp
-      .connect()
-      .then(() => {
-        console.log("RDP connection established");
-        resolve("Connected to VM via RDP");
-      })
-      .catch((err) => {
-        console.error("Error connecting to VM via RDP:", err);
-        reject(err);
-      });
-  });
-};
-
 // Get all VMs
 router.get("/api/vms", (req, res) => {
-  ensureFileAndDirectoryExist();
+  ensureFileAndDirectoryExist(dirPath, filePath);
   fs.readFile(filePath, (err, data) => {
     if (err) {
       return res.status(500).json({
@@ -90,7 +57,8 @@ router.post("/api/vms", (req, res) => {
       });
     }
 
-    vms.push({ name, domain, username, password });
+    const encryptedPassword = encryptPassword(password);
+    vms.push({ name, domain, username, password: encryptedPassword });
     fs.writeFile(filePath, JSON.stringify(vms, null, 2), (err) => {
       if (err) {
         return res.status(500).json({ error: "Could not write file" });
@@ -104,7 +72,9 @@ router.post("/api/vms", (req, res) => {
 router.post("/api/vms/connect", async (req, res) => {
   try {
     const { name, domain, username, password } = req.body;
-    connectToVm(name, domain, username, password);
+    const decryptedPassword = decryptPassword(password);
+    console.log("decryptedPassword", decryptedPassword);
+    connectToVm(name, domain, username, decryptedPassword);
     res.json({ message: "Connection request is in progress." });
   } catch (error) {
     return res.status(500).json({ error: "Could not connect to the VM" });
