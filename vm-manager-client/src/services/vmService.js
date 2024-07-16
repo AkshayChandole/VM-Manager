@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:50000/api/vms";
+const API_URL = `${process.env.REACT_APP_SERVER_BASE_URL}/api/vms`;
 
 const getToken = () => {
   return localStorage.getItem("token");
