@@ -1,17 +1,22 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
-const RDP = require("node-rdp");
 const { connectToVm } = require("../utils/vmConnectionUtils");
 const { ensureFileAndDirectoryExist } = require("../utils/fileUtils");
-const {
-  encryptPassword,
-  decryptPassword,
-} = require("../utils/encryptionUtils");
+const { decryptPassword } = require("../utils/encryptionUtils");
 const router = express.Router();
 
 const dirPath = path.join(__dirname, "../config");
 const filePath = path.join(dirPath, "VMs.json");
+const usersFilePath = path.join(dirPath, "Users.json");
+
+const secretKey = "vm-password-key";
+
+// function to get all users
+const getUsers = () => {
+  ensureFileAndDirectoryExist(dirPath, usersFilePath);
+  return JSON.parse(fs.readFileSync(usersFilePath, "utf8"));
+};
 
 // Get all VMs
 router.get("/api/vms", (req, res) => {
@@ -22,74 +27,80 @@ router.get("/api/vms", (req, res) => {
         error: `Could not fetch all the VMs from ${filePath} file`,
       });
     }
-    const vms = JSON.parse(data || "[]");
+    const vms = JSON.parse(data || "[]").filter(
+      (vm) => vm.createdBy === req.userId
+    );
     res.json(vms);
   });
 });
 
-// Add new VM
-router.post("/api/vms", (req, res) => {
-  const { name, domain, username, password } = req.body;
+// Add new VM with existing user
+router.post("/api/vms", async (req, res) => {
+  const { name, ip, domain, username } = req.body;
 
-  // Validation check
-  if (!name || !domain || !username || !password) {
+  if (!name || !ip || !domain || !username) {
     return res.status(400).json({
-      error: "All fields (name, domain, username, password) are required",
+      error: "VM Name, IP Address, Domain, and Username are required",
     });
   }
 
   ensureFileAndDirectoryExist(dirPath, filePath);
-  fs.readFile(filePath, (err, data) => {
-    let vms = [];
-    if (!err && data.length > 0) {
-      vms = JSON.parse(data);
-    }
 
-    // Check for duplicate VM
+  try {
+    let vms = JSON.parse(fs.readFileSync(filePath));
+
     const duplicateVm = vms.find(
       (vm) =>
-        vm.name === name && vm.domain === domain && vm.username === username
+        vm.ip === ip &&
+        vm.domain.toLowerCase() == domain.toLowerCase() &&
+        vm.username.toLowerCase() == username.toLowerCase()
     );
 
     if (duplicateVm) {
       return res.status(400).json({
-        error: "VM with the same name, domain, and username already exists",
+        error:
+          "VM with the same ip address, domain, and username already exists",
       });
     }
 
-    const encryptedPassword = encryptPassword(password);
-    vms.push({ name, domain, username, password: encryptedPassword });
-    fs.writeFile(filePath, JSON.stringify(vms, null, 2), (err) => {
-      if (err) {
-        return res.status(500).json({ error: "Could not write file" });
-      }
-      res.json({ message: "VM added successfully" });
-    });
-  });
+    vms.push({ name, ip, domain, username, createdBy: req.userId });
+    fs.writeFileSync(filePath, JSON.stringify(vms, null, 2));
+
+    res.json({ message: "VM added successfully" });
+  } catch (error) {
+    console.error("Error adding VM:", error);
+    res.status(500).json({ error: "Could not add VM" });
+  }
 });
 
 // Connect to VM via RDP
 router.post("/api/vms/connect", async (req, res) => {
   try {
-    const { name, domain, username, password } = req.body;
-    const decryptedPassword = decryptPassword(password);
-    console.log("decryptedPassword", decryptedPassword);
-    connectToVm(name, domain, username, decryptedPassword);
+    const { ip, domain, username } = req.body;
+    console.log(req.body);
+    const users = getUsers();
+    const vmUser = users.find(
+      (user) => user.username.toLowerCase() === username.toLowerCase()
+    );
+    const encryptedPassword = vmUser.password;
+    const decryptedPassword = decryptPassword(encryptedPassword, secretKey);
+    connectToVm(ip, domain, username, decryptedPassword);
     res.json({ message: "Connection request is in progress." });
   } catch (error) {
     return res.status(500).json({ error: "Could not connect to the VM" });
   }
 });
 
+// Delete the VM
 router.delete("/api/vms/:name", (req, res) => {
-  const vmName = req.params.name;
+  const name = req.params.name;
   ensureFileAndDirectoryExist(dirPath, filePath);
   fs.readFile(filePath, (err, data) => {
     if (err) {
       return res.status(500).json({ error: "Could not read file" });
     }
     let vms = JSON.parse(data);
-    vms = vms.filter((vm) => vm.name !== vmName);
+    vms = vms.filter((vm) => vm.name !== name);
     fs.writeFile(filePath, JSON.stringify(vms, null, 2), (err) => {
       if (err) {
         return res

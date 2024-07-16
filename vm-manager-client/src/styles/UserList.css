@@ -1,0 +1,107 @@
+.user-list {
+  background-color: #2c3e50; /* Light grey background */
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 900px;
+  margin: 20px auto;
+  color: #ecf0f1;
+}
+
+.user-list h2 {
+  margin-bottom: 15px;
+  font-size: 1.5em;
+  color: #ecf0f1;
+  text-align: center;
+}
+
+.user-list table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  z-index: -5;
+}
+
+.user-list th,
+.user-list td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.user-list th {
+  background-color: #34495e; /* Green */
+  color: white;
+  text-align: center;
+  font-weight: bold;
+}
+
+.user-list td {
+  background-color: #34495e;
+  text-align: center;
+}
+
+.actions button {
+  background-color: #2980b9;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 5px;
+}
+
+.actions button:hover {
+  background-color: #3498db;
+}
+
+.actions button.delete-user-btn {
+  background-color: #e74c3c;
+  color: #ecf0f1;
+  margin-left: 5px;
+}
+
+.actions button.delete-user-btn:hover {
+  background-color: #c0392b;
+}
+
+.show-password-button {
+  background-color: #2980b9;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.show-password-button:hover {
+  background-color: #3498db;
+}
+
+.editing {
+  background-color: #d1ecf1;
+}
+
+button.save-button {
+  background-color: #4caf50; /* Green */
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.save-button:hover {
+  background-color: #45a049; /* Darker green */
+}
+
+.no-users-watermark {
+  color: #bdc3c7;
+  font-style: italic;
+  text-align: center;
+  margin-top: 20px;
+}

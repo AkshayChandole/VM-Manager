@@ -1,10 +1,10 @@
 const { exec } = require("child_process");
 
 // function to trigger batch command to connect to remote VM
-const connectToVm = (vmName, domain, username, password) => {
+const connectToVm = (ip, domain, username, password) => {
   // Execute the mstsc command to establish an RDP connection
   const childProcess = exec(
-    `cmdkey /generic:${vmName} /user:${domain}\\${username} /pass:${password} && mstsc /v:${vmName} /f /noConsentPrompt && cmdKey /delete:${vmName}`
+    `cmdkey /generic:${ip} /user:${domain}\\${username} /pass:${password} && mstsc /v:${ip} /f /noConsentPrompt && cmdKey /delete:${ip}`
   );
 
   // Listen for stdout data from the child process

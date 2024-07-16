@@ -1,4 +1,5 @@
 import React from "react";
+import "../styles/VMList.css";
 
 const VMList = ({ vms, onConnectVM, onDeleteVM }) => {
   return (
@@ -6,11 +7,12 @@ const VMList = ({ vms, onConnectVM, onDeleteVM }) => {
       <h2>VMs</h2>
       <div className="vm-cards">
         {vms.length === 0 ? (
-          <p className="no-vms-watermark">No VMs data available</p>
+          <p className="no-vms-watermark">No VMs data available.</p>
         ) : (
           vms.map((vm) => (
             <div key={vm.name} className="vm-card">
               <h3>{vm.name}</h3>
+              <p>IP Addres: {vm.ip}</p>
               <p>Domain: {vm.domain}</p>
               <p>Username: {vm.username}</p>
               <button

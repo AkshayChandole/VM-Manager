@@ -1,13 +1,11 @@
 const CryptoJS = require("crypto-js");
 
-const secretKey = "vm-password-key";
-
-const encryptPassword = (password) => {
+const encryptPassword = (password, secretKey) => {
   const encryptedData = CryptoJS.AES.encrypt(password, secretKey).toString();
   return encryptedData;
 };
 
-const decryptPassword = (encryptedPassword) => {
+const decryptPassword = (encryptedPassword, secretKey) => {
   const decryptedPassword = CryptoJS.AES.decrypt(
     encryptedPassword,
     secretKey
