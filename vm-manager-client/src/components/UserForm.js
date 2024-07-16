@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import "../styles/UserForm.css";
+import { encryptPassword } from "../services/passwordService";
 
 const UserForm = ({ onAddUser }) => {
   const [newUser, setNewUser] = useState({ username: "", password: "" });
+
+  const SECRET_KEY = process.env.REACT_APP_USER_PASSWORD_SECRET_KEY;
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -14,7 +17,8 @@ const UserForm = ({ onAddUser }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAddUser(newUser);
+    const encryptedPassword = encryptPassword(newUser.password, SECRET_KEY);
+    onAddUser({ ...newUser, password: encryptedPassword });
     setNewUser({ username: "", password: "" });
   };
 

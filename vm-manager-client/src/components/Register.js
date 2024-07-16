@@ -3,10 +3,13 @@ import { registerUser } from "../services/userAccoutService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "../styles/Register.css";
+import { encryptPassword } from "../services/passwordService";
 
 const Register = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const navigate = useNavigate();
+
+  const SECRET_KEY = process.env.REACT_APP_LOGIN_PASSWORD_SECRET_KEY;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -14,8 +17,11 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const encryptedPassword = encryptPassword(formData.password, SECRET_KEY);
+
     try {
-      await registerUser(formData);
+      await registerUser({ ...formData, password: encryptedPassword });
       toast.success("User registered successfully");
       navigate("/vms");
     } catch (error) {

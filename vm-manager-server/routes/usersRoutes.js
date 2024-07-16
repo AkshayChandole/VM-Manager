@@ -12,7 +12,7 @@ const dirPath = path.join(__dirname, "../config");
 const filePath = path.join(dirPath, "Users.json");
 const vmsFilePath = path.join(dirPath, "VMs.json");
 
-const secretKey = "vm-password-key";
+const userPasswordSecretKey = process.env.USER_PASSWORD_SECRET_KEY;
 
 // Get all users
 router.get("/api/users", (req, res) => {
@@ -54,11 +54,9 @@ router.post("/api/users", (req, res) => {
         .json({ error: "User with same username already exists" });
     }
 
-    const encryptedPassword = encryptPassword(password, secretKey);
-
     users.push({
       username,
-      password: encryptedPassword,
+      password,
       createdBy: req.userId,
     });
 
@@ -100,7 +98,7 @@ router.put("/api/users/:username", (req, res) => {
 
     users[userIndex] = {
       username: newUsername,
-      password: encryptPassword(newPassword, secretKey),
+      password: encryptPassword(newPassword, userPasswordSecretKey),
       createdBy: req.userId,
     };
 
@@ -176,7 +174,10 @@ router.get("/api/users/:username/decrypt", (req, res) => {
       (user) => user.username.toLowerCase() === username.toLowerCase()
     );
     if (user) {
-      const decryptedPassword = decryptPassword(user.password, secretKey);
+      const decryptedPassword = decryptPassword(
+        user.password,
+        userPasswordSecretKey
+      );
       res.json({ username: user.username, password: decryptedPassword });
     } else {
       res.status(404).status("User not found");

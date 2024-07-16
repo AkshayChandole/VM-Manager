@@ -2,18 +2,16 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const { ensureFileAndDirectoryExist } = require("../utils/fileUtils");
-const {
-  encryptPassword,
-  decryptPassword,
-} = require("../utils/encryptionUtils");
+const { decryptPassword } = require("../utils/encryptionUtils");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const dirPath = path.join(__dirname, "../config");
 const filePath = path.join(dirPath, "accountUsers.json");
 
-const secretKey = "vm-manager-account-users";
-const jwtSecretKey = "vm-manager-account-user-jwt";
+const loginPasswordSecretKey = process.env.LOGIN_PASSWORD_SECRET_KEY;
+const jwtSecretKey = process.env.JWT_SECRET_KEY;
 
 // Login a user
 router.post("/api/login", (req, res) => {
@@ -34,8 +32,16 @@ router.post("/api/login", (req, res) => {
     );
 
     if (user) {
-      const decryptedPassword = decryptPassword(user.password, secretKey);
-      if (decryptedPassword === password) {
+      const decryptedActualPassword = decryptPassword(
+        user.password,
+        loginPasswordSecretKey
+      );
+      const decryptedProvidedPassword = decryptPassword(
+        password,
+        loginPasswordSecretKey
+      );
+
+      if (decryptedActualPassword === decryptedProvidedPassword) {
         const token = jwt.sign({ username: user.username }, jwtSecretKey, {
           expiresIn: "1h",
         });
@@ -78,8 +84,7 @@ router.post("/api/signup", (req, res) => {
         .json({ error: "User with the same username already exists" });
     }
 
-    const encryptedPassword = encryptPassword(password, secretKey);
-    users.push({ username, password: encryptedPassword });
+    users.push({ username, password });
 
     fs.writeFile(filePath, JSON.stringify(users, null, 2), (err) => {
       if (err) {

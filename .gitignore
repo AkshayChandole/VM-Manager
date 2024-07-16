@@ -7,3 +7,4 @@
 
 #server-side
 /vm-manager-server/node_modules
+/vm-manager-server/.env
