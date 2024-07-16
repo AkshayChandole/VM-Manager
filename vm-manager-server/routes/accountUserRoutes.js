@@ -59,7 +59,6 @@ router.post("/api/signup", (req, res) => {
       .json({ error: "Both username and password are required" });
   }
 
-  console.log(req.body);
   ensureFileAndDirectoryExist(dirPath, filePath);
 
   fs.readFile(filePath, (err, data) => {

@@ -77,7 +77,7 @@ router.post("/api/vms", async (req, res) => {
 router.post("/api/vms/connect", async (req, res) => {
   try {
     const { ip, domain, username } = req.body;
-    console.log(req.body);
+
     const users = getUsers();
     const vmUser = users.find(
       (user) => user.username.toLowerCase() === username.toLowerCase()

@@ -17,7 +17,7 @@ const NavBar = ({ onLogout }) => {
     onLogout();
     navigate("/login");
   };
-  console.log("navbar", isAuthenticated);
+
   return (
     <nav className="navbar">
       <div className="navbar-header">

@@ -24,7 +24,7 @@ function App() {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
   };
-  console.log(isAuthenticated);
+
   return (
     <BrowserRouter>
       <NavBar onLogout={handleLogout} />
