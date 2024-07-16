@@ -2,6 +2,7 @@
 /vm-manager-client/node_modules
 /vm-manager-client/README.md
 /vm-manager-client/.gitignore
+/vm-manager-client/build
 
 #server-side
 /vm-manager-server/node_modules
